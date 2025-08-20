@@ -545,6 +545,7 @@ window.addEventListener('click', function(event) {
       });
     }
 
+    
     function ordenarProductos() {
       const criterio = document.getElementById('ordenarProductos').value;
       const container = document.querySelector('.productos');
@@ -554,25 +555,31 @@ window.addEventListener('click', function(event) {
       } else if (criterio === "desc") {
         productos.sort((a,b) => b.querySelector('h3').textContent.localeCompare(a.querySelector('h3').textContent));
       }
-      productos.forEach(p => container.appendChild(p));
+      productos.forEach(prod => container.appendChild(prod));
     }
 
-    // Mostrar modal al cargar la página
-window.onload = function() {
-  document.getElementById('modalTerminos').style.display = 'flex';
-};
+    // Modal Términos y Condiciones
+    const modalTerminos = document.getElementById('modalTerminos');
+    const mostrarTerminosBtn = document.getElementById('mostrarTerminos');
+    const contenidoTerminos = document.getElementById('contenidoTerminos');
+    const aceptarTerminosBtn = document.getElementById('aceptarTerminos');
 
-// Mostrar/ocultar términos al dar click en el encabezado
-document.getElementById('mostrarTerminos').onclick = function() {
-  const contenido = document.getElementById('contenidoTerminos');
-  contenido.style.display = contenido.style.display === 'none' ? 'block' : 'none';
-};
+    window.onload = function() {
+      modalTerminos.style.display = 'flex';
 
-// Cerrar modal al aceptar
-document.getElementById('aceptarTerminos').onclick = function() {
-  document.getElementById('modalTerminos').style.display = 'none';
-};
+      // Aceptar automáticamente después de 10 segundos
+      setTimeout(() => {
+        aceptarTerminosBtn.click();
+      }, 10000); // 10000 ms = 10 segundos
+    };
 
+    mostrarTerminosBtn.onclick = function() {
+      contenidoTerminos.style.display = contenidoTerminos.style.display === 'none' ? 'block' : 'none';
+    };
+
+    aceptarTerminosBtn.onclick = function() {
+      modalTerminos.style.display = 'none';
+    };
   </script>
 </body>
 </html>
