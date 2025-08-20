@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SneakZone</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Arial', sans-serif; background-color: #f5f5f5; color: #333; }
+
+    header {
+      background-color: #111;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 { font-size: 24px; }
+
+    #botonCarrito {
+      background-color: #ff6600;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    #botonCarrito:hover { background-color: #e65c00; }
+
+    .hero { height: 5vh; }
+
+   .sitioOficial {
+  text-align: center;
+  margin: 20px 0;
+  font-weight: bold;
+  font-size: 14px;
+  color: #111;
+}
+
+
+
+    .mainContainer {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      margin-top: -50px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+    }
+
+    .sidebar input, .sidebar select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    /* Productos */
+    .productos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      flex-grow: 1;
+      margin-top: 0;
+    }
+
+    .producto {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .producto img {
+      width: 60%;
+      height: 165px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .producto h3 { margin-bottom: 10px; }
+
+    .producto button {
+      padding: 10px 20px;
+      background-color: #ff6600;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .producto button:hover { background-color: #e65c00; }
+
+    /* Carrito */
+    .carritoPanel {
+      position: fixed;
+      right: -300px;
+      top: 0;
+      width: 300px;
+      height: 100%;
+      background-color: #fff;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+      padding: 20px;
+      transition: right 0.3s;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .carritoPanel.open { right: 0; }
+
+    .carritoPanel h3 { margin-bottom: 15px; }
+
+    .carritoPanel ul {
+      list-style: none;
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    .carritoPanel ul li {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .carritoPanel button { 
+      background-color: red;
+      color: #fff;
+      border: none;
+      padding: 3px 7px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #pagarBtn {
+      padding: 10px;
+      background-color: green;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    #pagarBtn:hover { background-color: darkgreen; }
+
+    /* Contacto */
+    .contactoContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px;
+  font-size: 14px;
+  margin-left: 20px;
+}
+.btnInstagram {
+  background-color: #E1306C; /* color característico de Instagram */
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+.btnInstagram:hover {
+  background-color: #C13584;
+}
+
+    /* Modal tallas */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 30; 
+      left: 0;
+      top: 0;
+      width: 100%; 
+      height: 100%; 
+      overflow: auto; 
+      background-color: rgba(0,0,0,0.7); 
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modalContent {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .modalContent img {
+      width: 80%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .tallasContainer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .talla {
+      width: 40px;
+      height: 40px;
+      background-color: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .talla:hover, .talla.seleccionada {
+      background-color: #ff6600;
+      color: #fff;
+    }
+
+.modalTerminos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modalTerminosContent {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 800px;
+  width: 90%;
+}
+.modalTerminosContent h3:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SneakZone</h1>
+    <button id="botonCarrito">🛒 Carrito</button>
+  </header>
+
+  <section class="hero"></section>
+
+  <div class="mainContainer">
+    <div class="sidebar">
+      <input type="text" id="buscarProducto" placeholder="Buscar producto..." onkeyup="filtrarProductos()">
+      <select id="ordenarProductos" onchange="ordenarProductos()">
+        <option value="">Ordenar por</option>
+        <option value="asc">A-Z</option>
+        <option value="desc">Z-A</option>
+      </select>
+    </div>
+
+    <section class="productos">
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro amarillos.jpg" alt="Tenis 1">
+        <h3>Tenis Nike Dunk Low Retro Amarillos</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro amarillos',1500,'Tenis Nike Dunk Low Retro amarillos.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro azules.jpg" alt="Tenis 2">
+        <h3>Tenis Nike Dunk Low Retro Azules</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Azules',1500,'Tenis Nike Dunk Low Retro azules.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro cafe.jpg" alt="Tenis 3">
+        <h3>Tenis Nike Dunk Low Retro Cafes</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Cafes',1500,'Tenis Nike Dunk Low Retro cafe.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro celestes.jpg" alt="Tenis 4">
+        <h3>Tenis Nike Dunk Low Retro Celestes</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Celestes',1500,'Tenis Nike Dunk Low Retro celestes.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro grises.jpg" alt="Tenis 5">
+        <h3>Tenis Nike Dunk Low Retro Grises</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Grises',1500,'Tenis Nike Dunk Low Retro grises.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro morados.jpg" alt="Tenis 6">
+        <h3>Tenis Nike Dunk Low Retro Morados</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Morados',1500,'Tenis Nike Dunk Low Retro morados.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro negros.jpg" alt="Tenis 7">
+        <h3>Tenis Nike Dunk Low Retro Negros</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Negros',1500,'Tenis Nike Dunk Low Retro negros.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro rojos.jpg" alt="Tenis 8">
+        <h3>Tenis Nike Dunk Low Retro Rojos</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Rojos',1500,'Tenis Nike Dunk Low Retro rojos.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro rosa.jpg" alt="Tenis 9">
+        <h3>Tenis Nike Dunk Low Retro Rosas</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Rosas',1500,'Tenis Nike Dunk Low Retro rosa.jpg')">Agregar al carrito</button>
+      </div>
+      <div class="producto">
+        <img src="Tenis Nike Dunk Low Retro verdes.jpg" alt="Tenis 10">
+        <h3>Tenis Nike Dunk Low Retro Verdes</h3>
+        <p>$1500</p>
+        <button onclick="agregarAlCarrito('Tenis Nike Dunk Low Retro Verdes',1500,'Tenis Nike Dunk Low Retro verdes.jpg')">Agregar al carrito</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Carrito -->
+  <div class="carritoPanel" id="carritoPanel">
+    <h3>Tu Carrito</h3>
+    <ul id="listaCarrito">
+      <li>No hay productos aún</li>
+    </ul>
+    <strong>Total: $<span id="total">0</span></strong>
+    <button id="pagarBtn" onclick="pagar()">Pagar</button>
+  </div>
+
+  <!-- Contacto -->
+ <!-- Contacto -->
+<div class="contactoContainer">
+  <span>Para más contacto:</span>
+  <a href="https://www.instagram.com/sneakzone.oficial?igsh=MW13N29icmZhanl1Zw==" target="_blank" class="btnInstagram">Instagram SneakZone Oficial</a>
+
+</div>
+
+<!-- Modal Términos y Condiciones -->
+<div id="modalTerminos" class="modalTerminos">
+  <div class="modalTerminosContent">
+    <h3 id="mostrarTerminos" style="cursor:pointer; color:#ff6600;">Términos y Condiciones</h3>
+    <div id="contenidoTerminos" style="display:none; text-align: justify; margin-top: 10px;">
+      <p>
+        Al realizar una compra a través de nuestro sitio web oficial SneakZone, usted acepta que toda la información proporcionada, incluyendo datos personales y detalles de pago, será respetada y utilizada únicamente para la correcta gestión de su pedido. Esta información no será compartida ni utilizada para fines comerciales o fraudulentos.
+      </p>
+      <p>
+        Es su responsabilidad verificar que los datos ingresados para la transferencia bancaria sean correctos antes de realizar el pago. Recuerde que la transferencia debe realizarse al número de tarjeta: <strong>646180139409249824</strong>, Banco: <strong>SPEI</strong>, Beneficiario: <strong>Mayra</strong>.
+      </p>
+      <p>
+        Una vez realizado el pago, el sistema validará automáticamente la transacción. El seguimiento del pedido se realizará dentro de las próximas <strong>4 horas</strong> posteriores a la validación. Cualquier demora o error deberá ser reportado directamente mediante nuestro Instagram oficial: <a href="https://www.instagram.com/sneakzone.oficial?igsh=MW13N29icmZhanl1Zw==" target="_blank">@sneakzone.oficial</a>.
+      </p>
+      <p>
+        Tenga en cuenta que cualquier reclamo presentado antes de <strong>12 horas</strong> posteriores a la realización del pago no será considerado válido. Cualquier pago realizado correctamente que no llegue inmediatamente no garantiza la devolución de fondos ni aceptación de reclamos o quejas.
+      </p>
+      <p>
+        El usuario entiende y acepta que los productos son entregados según disponibilidad y que la información proporcionada por SneakZone es de carácter informativo y no contractual más allá de la compra realizada.
+      </p>
+      <p>
+        Su privacidad y seguridad son nuestra prioridad; toda información será tratada de manera confidencial y se tomará estricta responsabilidad para que no sea mal utilizada por terceros. Al aceptar estos términos, usted acuerda que comprende todas las limitaciones, obligaciones y responsabilidades mencionadas anteriormente, así como las políticas de pago y seguimiento de pedidos de SneakZone.
+      </p>
+      <button id="aceptarTerminos" style="margin-top: 15px; padding:10px 20px; background-color:#ff6600; color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">Estoy de acuerdo</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="sitioOficial">&copy; 2025 SneakZone, Inc Mayra. Todos los derechos e información reservada.</div>
+
+
+
+
+  <!-- Modal tallas -->
+  <div class="modal" id="modalTallas">
+    <div class="modalContent">
+      <h3 id="modalNombre">Tenis</h3>
+      <img id="modalImagen" src="" alt="Tenis">
+      <div class="tallasContainer" id="tallasContainer"></div>
+      <button id="confirmarTalla" onclick="confirmarTalla()" disabled>Agregar al carrito</button>
+    </div>
+  </div>
+
+  <script>
+    const carritoPanel = document.getElementById('carritoPanel');
+    const botonCarrito = document.getElementById('botonCarrito');
+    botonCarrito.onclick = () => carritoPanel.classList.toggle('open');
+
+    let carrito = [];
+    let total = 0;
+
+    // Modal tallas
+    const modal = document.getElementById('modalTallas');
+    const modalNombre = document.getElementById('modalNombre');
+    const modalImagen = document.getElementById('modalImagen');
+    const tallasContainer = document.getElementById('tallasContainer');
+    let tallaSeleccionada = null;
+    let productoActual = null;
+    const tallas = ["22","22.5","23","23.5","24","24.5","25","25.5","26","26.5","27","27.5","28","28.5","29","29.5"];
+
+    function agregarAlCarrito(nombre, precio, imgSrc){
+      productoActual = {nombre, precio, imgSrc};
+      modal.style.display = 'flex';
+      modalNombre.textContent = nombre;
+      modalImagen.src = imgSrc;
+      tallasContainer.innerHTML = '';
+      tallaSeleccionada = null;
+      document.getElementById('confirmarTalla').disabled = true;
+
+      tallas.forEach(t => {
+        const div = document.createElement('div');
+        div.classList.add('talla');
+        div.textContent = t;
+        div.onclick = () => {
+          document.querySelectorAll('.talla').forEach(x => x.classList.remove('seleccionada'));
+          div.classList.add('seleccionada');
+          tallaSeleccionada = t;
+          document.getElementById('confirmarTalla').disabled = false;
+        };
+        tallasContainer.appendChild(div);
+      });
+    }
+
+    function confirmarTalla(){
+      if(!tallaSeleccionada) return;
+      const {nombre, precio} = productoActual;
+      const lista = document.getElementById("listaCarrito");
+
+      if(carrito.length === 0 && lista.children[0].textContent === "No hay productos aún"){
+        lista.innerHTML = "";
+      }
+
+      carrito.push({nombre, precio, talla: tallaSeleccionada});
+      total += precio;
+
+      const li = document.createElement("li");
+      li.textContent = `${nombre} - Talla ${tallaSeleccionada} - $${precio}`;
+
+      const botonEliminar = document.createElement("button");
+      botonEliminar.textContent = "X";
+      botonEliminar.onclick = function(){
+        total -= precio;
+        lista.removeChild(li);
+        document.getElementById("total").textContent = total;
+        carrito = carrito.filter(item => item !== carrito.find(i => i.nombre===nombre && i.talla===tallaSeleccionada));
+        if(lista.children.length === 0){
+          lista.innerHTML = "<li>No hay productos aún</li>";
+        }
+      };
+
+      li.appendChild(botonEliminar);
+      lista.appendChild(li);
+      document.getElementById("total").textContent = total;
+      modal.style.display = 'none';
+    }
+
+    window.onclick = function(event){
+      if(event.target === modal){
+        modal.style.display = 'none';
+      }
+    }
+    // Cerrar carrito al hacer click fuera
+window.addEventListener('click', function(event) {
+  const carrito = document.getElementById('carritoPanel');
+  const boton = document.getElementById('botonCarrito');
+
+  // Si el carrito está abierto y el click no es dentro del carrito ni en el botón del carrito
+  if(carrito.classList.contains('open') && !carrito.contains(event.target) && event.target !== boton){
+    carrito.classList.remove('open');
+  }
+});
+
+
+   function pagar() {
+  if(carrito.length === 0){
+    alert("Tu carrito está vacío.");
+    return;
+  }
+
+  const mensaje = 
+    `¡Gracias por su compra! Total: $${total}\n\n` +
+    `Por favor realice su transferencia a los siguientes datos:\n` +
+    `Número de tarjeta: 646180139409249824\n` +
+    `Banco: SPEI\n` +
+    `Nombre del beneficiario: Mayra\n\n` +
+    `Su transferencia se verificará y se dará seguimiento en las próximas 4 horas.\n` +
+    `Si ocurre algún error, por favor póngase en contacto con nosotros y envíe su captura de pago.`;
+
+  alert(mensaje);
+
+  // Limpiamos el carrito
+  carrito = [];
+  total = 0;
+  document.getElementById("listaCarrito").innerHTML = "<li>No hay productos aún</li>";
+  document.getElementById("total").textContent = total;
+  carritoPanel.classList.remove('open');
+}
+
+
+    function filtrarProductos() {
+      const filtro = document.getElementById('buscarProducto').value.toLowerCase();
+      const productos = document.querySelectorAll('.producto');
+      productos.forEach(producto => {
+        const nombre = producto.querySelector('h3').textContent.toLowerCase();
+        producto.style.display = nombre.includes(filtro) ? '' : 'none';
+      });
+    }
+
+    function ordenarProductos() {
+      const criterio = document.getElementById('ordenarProductos').value;
+      const container = document.querySelector('.productos');
+      let productos = Array.from(container.children);
+      if (criterio === "asc") {
+        productos.sort((a,b) => a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent));
+      } else if (criterio === "desc") {
+        productos.sort((a,b) => b.querySelector('h3').textContent.localeCompare(a.querySelector('h3').textContent));
+      }
+      productos.forEach(p => container.appendChild(p));
+    }
+
+    // Mostrar modal al cargar la página
+window.onload = function() {
+  document.getElementById('modalTerminos').style.display = 'flex';
+};
+
+// Mostrar/ocultar términos al dar click en el encabezado
+document.getElementById('mostrarTerminos').onclick = function() {
+  const contenido = document.getElementById('contenidoTerminos');
+  contenido.style.display = contenido.style.display === 'none' ? 'block' : 'none';
+};
+
+// Cerrar modal al aceptar
+document.getElementById('aceptarTerminos').onclick = function() {
+  document.getElementById('modalTerminos').style.display = 'none';
+};
+
+  </script>
+</body>
+</html>
