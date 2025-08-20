@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro e Inicio de Sesión</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: black; /* Fondo negro */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .contenedor {
+      background: white; /* Cuadro blanco */
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      text-align: center;
+      width: 320px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: black;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      background: black;   /* Botón negro */
+      color: white;        /* Texto blanco */
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #333; /* Un poco más claro al pasar el mouse */
+    }
+
+    .oculto {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+
+    <!-- FORMULARIO DE REGISTRO -->
+    <div id="formRegistro">
+      <h2>Registro</h2>
+      <input type="text" id="nombre" placeholder="Nombre de usuario"><br>
+      <input type="email" id="correo" placeholder="Correo electrónico"><br>
+      <input type="text" id="telefono" placeholder="Número de teléfono"><br>
+      <button id="btnRegistrar" onclick="registrar()">Registrar</button>
+      <br><br>
+      <button id="btnIrLogin" onclick="mostrarLogin()">Iniciar Sesión</button>
+    </div>
+
+    <!-- FORMULARIO DE LOGIN -->
+    <div id="formLogin" class="oculto">
+      <h2>Iniciar Sesión</h2>
+      <input type="email" id="correoLogin" placeholder="Correo electrónico"><br>
+      <input type="text" id="telefonoLogin" placeholder="Número de teléfono"><br>
+      <button onclick="iniciarSesion()">Iniciar Sesión</button>
+    </div>
+
+  </div>
+
+  <script type="module">
+    // Importar Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+    // Configuración Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-I_1UVY4YXxxBLO_GStilykApuIr84xA",
+      authDomain: "zona-d166b.firebaseapp.com",
+      databaseURL: "https://zona-d166b-default-rtdb.firebaseio.com",
+      projectId: "zona-d166b",
+      storageBucket: "zona-d166b.firebasestorage.app",
+      messagingSenderId: "617388029358",
+      appId: "1:617388029358:web:a13582062686c93eee043f",
+      measurementId: "G-W1FD91ML1K"
+    };
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Mostrar Login
+    window.mostrarLogin = function() {
+      document.getElementById("formRegistro").classList.add("oculto");
+      document.getElementById("formLogin").classList.remove("oculto");
+    }
+
+    // Función Registrar
+    window.registrar = function() {
+      const nombre = document.getElementById("nombre").value;
+      const correo = document.getElementById("correo").value;
+      const telefono = document.getElementById("telefono").value;
+
+      if (nombre && correo && telefono) {
+        set(ref(db, "usuarios/" + telefono), {
+          nombre: nombre,
+          correo: correo,
+          telefono: telefono
+        }).then(() => {
+          alert("Registro exitoso ✅ Ahora inicia sesión.");
+          // Ocultar botón Registrar
+          document.getElementById("btnRegistrar").style.display = "none";
+          // Mostrar botón para ir a Login
+          document.getElementById("btnIrLogin").style.display = "block";
+        }).catch((error) => {
+          alert("Error en registro: " + error);
+        });
+      } else {
+        alert("Por favor llena todos los campos");
+      }
+    }
+
+    // Función Iniciar Sesión
+    window.iniciarSesion = function() {
+      const correo = document.getElementById("correoLogin").value;
+      const telefono = document.getElementById("telefonoLogin").value;
+
+      if (correo && telefono) {
+        const dbRef = ref(db);
+        get(child(dbRef, "usuarios/" + telefono)).then((snapshot) => {
+          if (snapshot.exists()) {
+            const datos = snapshot.val();
+            if (datos.correo === correo) {
+              alert("Bienvenido " + datos.nombre + " 🎉");
+              // Redirigir a index.html
+              window.location.href = "index.html";
+            } else {
+              alert("Correo incorrecto ❌");
+            }
+          } else {
+            alert("Usuario no encontrado ❌");
+          }
+        }).catch((error) => {
+          alert("Error en inicio de sesión: " + error);
+        });
+      } else {
+        alert("Ingresa correo y número de teléfono");
+      }
+    }
+  </script>
+</body>
+</html>
